@@ -1,0 +1,7 @@
+﻿@using Forestry.Eapc.External.Web.Infrastructure
+@{
+    if (TempData.ContainsKey(ControllerExtensions.ConfirmationMessageKey))
+    {
+        <div class="govuk-inset-text blue-border">@TempData[ControllerExtensions.ConfirmationMessageKey]</div>
+    }
+}

@@ -1,0 +1,111 @@
+﻿@using Forestry.Eapc.External.Web.Infrastructure.Display
+@using Forestry.Eapc.External.Web.Models.Application
+@using Forestry.Eapc.External.Web.Services
+@model Forestry.Eapc.External.Web.Models.Application.Application
+
+@inject CountryProvider Countries
+
+@{
+    var countries = Countries.GetCountries();
+
+    var listOfDestinationCountries = countries
+        .Where(x => !"United Kingdom".Equals(x.Name, StringComparison.InvariantCultureIgnoreCase)
+            && !"Ireland".Equals(x.Name, StringComparison.InvariantCultureIgnoreCase))
+        .Select(x => x.Name)
+        .ToList();
+    listOfDestinationCountries.Add("Northern Ireland");
+    listOfDestinationCountries.Add("Republic of Ireland");
+    listOfDestinationCountries = listOfDestinationCountries.OrderBy(x => x).ToList();
+
+    var showSave = Model.State == ApplicationState.Draft;
+    var showSummaryButtonSet = !ViewData.ModelState.IsValid || ViewBag.AllSectionValidationErrorsResolved is not null;
+}
+    
+    <partial name="Partials/_ConfirmationMessageDisplay" />
+    <partial name="Partials/_ModelValidationErrors" />
+    
+    <vc:gds-warning warning-message-assistive-html="Details below will be printed on the certificate. Ensure all details are recorded exactly how you want them presented"
+                warning-message-html="Details below will be printed on the certificate.<br/>Ensure all details are recorded exactly how you want them presented." />    
+
+    <form method="post">
+        <div class="govuk-form-group">
+            <validation asp-for="Section3.NameOfConsignee"></validation>
+            <label asp-for="Section3.NameOfConsignee" class="@PageConstants.GdsLabelCssClass"></label>
+            <div id="consignee-name-help" class="govuk-hint">
+                The name of the individual or company receiving the goods at the country of destination, as it should appear on the phytosanitary certificate.
+            </div>
+            <input class="@PageConstants.GdsInputCssClass" asp-for="Section3.NameOfConsignee" aria-describedby="consignee-name-help">
+        </div>
+
+        <div class="govuk-form-group">
+            <validation asp-for="Section3.PortOfExport"></validation>
+            <label asp-for="Section3.PortOfExport" class="@PageConstants.GdsLabelCssClass"></label>
+            <input class="@PageConstants.GdsInputCssClass" asp-for="Section3.PortOfExport">
+        </div>
+
+        <div class="govuk-form-group">
+            <validation asp-for="Section3.PortOfImport"></validation>
+            <label asp-for="Section3.PortOfImport" class="@PageConstants.GdsLabelCssClass"></label>
+            <div id="port-of-import-help" class="govuk-hint">This is the port of entry within the country of destination.</div>
+            <input asp-for="Section3.PortOfImport" class="@PageConstants.GdsInputCssClass" aria-describedby="port-of-import-help">
+        </div>
+
+        <div class="govuk-form-group">
+            <validation asp-for="Section3.DateOfExport"></validation>
+            <label asp-for="Section3.DateOfExport" class="@PageConstants.GdsLabelCssClass"></label>
+            <div id="date-of-export-help" class="govuk-hint">The date of export should be between 5 (five) and 14 (fourteen) working days from now for a phytosanitary certificate to be issued.</div>
+            <input class="@PageConstants.GdsInputCssClass govuk-input--width-10" asp-for="Section3.DateOfExport" min="@DateTime.UtcNow.Date.AddDays(1).ToString("yyyy-MM-dd")" aria-describedby="date-of-export-help">
+        </div>
+
+        <div class="govuk-form-group">
+            <validation asp-for="Section3.AddressOfConsignee.Line1"></validation>
+            <label asp-for="Section3.AddressOfConsignee.Line1" class="@PageConstants.GdsLabelCssClass">Consignee Address Line 1</label>
+            <input class="@PageConstants.GdsInputCssClass" asp-for="Section3.AddressOfConsignee.Line1">
+        </div>
+        <div class="govuk-form-group">
+            <validation asp-for="Section3.AddressOfConsignee.Line2"></validation>
+            <label asp-for="Section3.AddressOfConsignee.Line2" class="@PageConstants.GdsLabelCssClass">Consignee Address Line 2</label>
+            <input class="@PageConstants.GdsInputCssClass" asp-for="Section3.AddressOfConsignee.Line2">
+        </div>
+        <div class="govuk-form-group">
+            <validation asp-for="Section3.AddressOfConsignee.Line3"></validation>
+            <label asp-for="Section3.AddressOfConsignee.Line3" class="@PageConstants.GdsLabelCssClass">Consignee Address Line 3</label>
+            <input class="@PageConstants.GdsInputCssClass govuk-!-width-two-thirds" asp-for="Section3.AddressOfConsignee.Line3">
+        </div>
+        <div class="govuk-form-group">
+            <validation asp-for="Section3.AddressOfConsignee.Line4"></validation>
+            <label asp-for="Section3.AddressOfConsignee.Line4" class="@PageConstants.GdsLabelCssClass eapc-optional-suffix">Consignee Address Line 4</label>
+            <input class="@PageConstants.GdsInputCssClass govuk-!-width-two-thirds" asp-for="Section3.AddressOfConsignee.Line4">
+        </div>
+        <div class="govuk-form-group">
+            <validation asp-for="Section3.AddressOfConsignee.Line5"></validation>
+            <label asp-for="Section3.AddressOfConsignee.Line5" class="@PageConstants.GdsLabelCssClass eapc-optional-suffix">Consignee Address Line 5</label>
+            <input class="@PageConstants.GdsInputCssClass  govuk-!-width-two-thirds" asp-for="Section3.AddressOfConsignee.Line5">
+        </div>
+        <div class="govuk-form-group">
+            <validation asp-for="Section3.CountryOfDestination"></validation>
+            <label asp-for="Section3.CountryOfDestination" class="@PageConstants.GdsLabelCssClass"></label>
+            <input class="govuk-select" asp-for="Section3.CountryOfDestination" list="country-of-destination-list"
+                   value="@Model.Section3.CountryOfDestination" placeholder="Please select"/>
+        </div>
+
+        @{
+            @if (showSummaryButtonSet)
+            {
+                <vc:next-previous-navigation show-previous="false" show-save="@showSave" show-next="false" show-go-to-summary="true" />
+            }
+            else
+            {
+                var nextButtonText = showSave ? "Save and continue" : "Continue";
+                <vc:next-previous-navigation show-previous="false" show-save="@showSave" show-next="true" show-go-to-summary="false" next-button-display-text="@nextButtonText" />
+            }
+        }
+
+    </form>
+
+<datalist id="country-of-destination-list">
+    @foreach (var country in listOfDestinationCountries)
+    {
+        <option value="@country"></option>
+    }
+</datalist>

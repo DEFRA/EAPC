@@ -1,0 +1,55 @@
+﻿@using Forestry.Eapc.External.Web.Infrastructure.Display
+@model Forestry.Eapc.External.Web.Models.Accounts.ApproveAccountModel
+
+
+<div class="govuk-grid-column-two-thirds">
+
+    <h1 class="govuk-heading-xl">Verify user profiles</h1>
+
+    <p class="govuk-body">This page allows you to verify that profiles created for users at your organisation (other than yourself) are valid.</p>
+    <p class="govuk-body">You will receive an email whenever a user signs up to the system with your Professional Operator Number, linking you to this page.  If the user
+        is a member of your organisation and is allowed to manage Applications, then you can verify their profile once it has been created by using this form.  
+        Until their profile is verified, they will not be able to manage Applications.</p>
+    
+    <h3 class="govuk-heading-s">Please enter the email address of the user account you wish to approve, and your six-digit Professional Operator Number</h3>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <div asp-validation-summary="All" class="govuk-error-summary__body"></div>
+            </div>
+        </div>
+    }
+
+
+    <form method="post">
+        
+        <div class="govuk-form-group">
+            <label asp-for="Email" class="@PageConstants.GdsLabelCssClass"></label>
+            <input class="@PageConstants.GdsInputCssClass govuk-!-width-two-thirds" asp-for="Email"/>
+        </div>
+        
+        <div class="govuk-form-group">
+            <label asp-for="ProfessionalOperatorNumber" class="@PageConstants.GdsLabelCssClass"></label>
+            <input class="@PageConstants.GdsInputCssClass govuk-!-width-two-thirds" asp-for="ProfessionalOperatorNumber"/>
+        </div>
+
+        <br/>
+
+        <div class="govuk-form-group">
+            <div class="govuk-button-group">
+
+                <button data-prevent-double-click="true" type="submit" class="govuk-button" data-module="govuk-button">
+                    Approve Account
+                </button>
+
+                <a class="govuk-link" asp-controller="Home" asp-action="Index" title="Abandon account approval and go to the home page">Cancel</a>
+
+            </div>
+        </div>
+    </form>
+</div>

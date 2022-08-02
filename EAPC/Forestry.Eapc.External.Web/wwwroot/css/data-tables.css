@@ -1,0 +1,7 @@
+﻿div.dataTables_wrapper div.dataTables_length select {
+    width: 5rem;
+}
+
+table.dataTable tbody th, table.dataTable tbody td {
+    padding: 10px 18px;
+}

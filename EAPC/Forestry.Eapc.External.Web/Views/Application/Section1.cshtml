@@ -1,0 +1,69 @@
+﻿@using Forestry.Eapc.External.Web.Infrastructure
+@using Forestry.Eapc.External.Web.Infrastructure.Display
+@using Forestry.Eapc.External.Web.Models.Application
+@model Forestry.Eapc.External.Web.Models.Application.Application
+
+@{
+    var showSave = Model.State == ApplicationState.Draft;
+    var showSummaryButtonSet = !ViewData.ModelState.IsValid || ViewBag.AllSectionValidationErrorsResolved is not null;
+}
+
+    <partial name="Partials/_ConfirmationMessageDisplay" />
+    <partial name="Partials/_ModelValidationErrors" />
+
+    <form method="post">
+        <fieldset class="govuk-fieldset">
+            <h1 class="govuk-heading-s">
+                The name of the exporter (individual or company), as it should appear on the phytosanitary certificate.
+            </h1>
+            <div class="govuk-form-group">
+                <validation asp-for="Section1.ExporterName"></validation>
+                <label asp-for="Section1.ExporterName" class="@PageConstants.GdsLabelCssClass"></label>
+                <input class="@PageConstants.GdsInputCssClass govuk-!-width-two-thirds" asp-for="Section1.ExporterName" aria-describedby="exporter-name-help">
+            </div>
+
+            <h1 class="govuk-heading-s">
+                The address of the exporter exactly as you would like it to appear on the certificate.
+            </h1>
+
+            <div class="govuk-form-group">
+                <validation asp-for="Section1.ExporterAddress.Line1"></validation>
+                <label asp-for="Section1.ExporterAddress.Line1" class="@PageConstants.GdsLabelCssClass"></label>
+                <input class="@PageConstants.GdsInputCssClass" asp-for="Section1.ExporterAddress.Line1" autocomplete="address-line1">
+            </div>
+            <div class="govuk-form-group">
+                <validation asp-for="Section1.ExporterAddress.Line2"></validation>
+                <label asp-for="Section1.ExporterAddress.Line2" class="@PageConstants.GdsLabelCssClass"></label>
+                <input class="@PageConstants.GdsInputCssClass" asp-for="Section1.ExporterAddress.Line2" autocomplete="address-line2">
+            </div>
+            <div class="govuk-form-group">
+                <validation asp-for="Section1.ExporterAddress.Line3"></validation>
+                <label asp-for="Section1.ExporterAddress.Line3" class="@PageConstants.GdsLabelCssClass"></label>
+                <input class="@PageConstants.GdsInputCssClass govuk-!-width-two-thirds" autocomplete="address-level2" asp-for="Section1.ExporterAddress.Line3">
+            </div>
+            <div class="govuk-form-group">
+                <validation asp-for="Section1.ExporterAddress.Line4"></validation>
+                <label asp-for="Section1.ExporterAddress.Line4" class="@PageConstants.GdsLabelCssClass eapc-optional-suffix"></label>
+                <input class="@PageConstants.GdsInputCssClass govuk-!-width-two-thirds" asp-for="Section1.ExporterAddress.Line4">
+            </div>
+            <div class="govuk-form-group">
+                <validation asp-for="Section1.ExporterAddress.PostalCode"></validation>
+                <label asp-for="Section1.ExporterAddress.PostalCode" class="@PageConstants.GdsLabelCssClass"></label>
+                <input class="@PageConstants.GdsInputCssClass govuk-input--width-10" asp-for="Section1.ExporterAddress.PostalCode" autocomplete="postal-code">
+            </div>
+        </fieldset>
+
+        @{
+            @if (showSummaryButtonSet)
+            {
+                <vc:next-previous-navigation show-previous="false" show-save="@showSave" show-next="false" show-go-to-summary="true" />
+            }
+            else
+            {
+                var nextButtonText = showSave ? "Save and continue" : "Continue";
+
+                <vc:next-previous-navigation show-previous="false" show-save="@showSave" show-next="true" show-go-to-summary="false" next-button-display-text="@nextButtonText" />
+            }
+        }
+
+    </form>

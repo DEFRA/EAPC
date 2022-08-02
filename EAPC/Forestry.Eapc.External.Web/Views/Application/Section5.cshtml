@@ -1,0 +1,95 @@
+﻿@using Forestry.Eapc.External.Web.Infrastructure.Display
+@using Forestry.Eapc.External.Web.Models.Application
+@model Forestry.Eapc.External.Web.Models.Application.Application
+
+@{
+
+    var showSave = Model.State == ApplicationState.Draft;
+    var showSummaryButtonSet = !ViewData.ModelState.IsValid || ViewBag.AllSectionValidationErrorsResolved is not null;
+}
+
+    <partial name="Partials/_ConfirmationMessageDisplay" />
+    <partial name="Partials/_ModelValidationErrors" />
+    
+    <vc:gds-warning warning-message-assistive-html="Warning."
+                warning-message-html="This page provides information about any treatments your commodity has undergone.<br />Details below will be printed on the certificate.<br />Ensure all details are recorded exactly how you want them presented." />    
+
+    <form method="post">
+        <div class="govuk-form-group">
+            <validation asp-for="Section5.Treatment"></validation>
+            <label asp-for="Section5.Treatment" class="@PageConstants.GdsLabelCssClass"></label>
+            <div id="treatment-help-text" class="govuk-hint">Treatment for landing requirements. Select treatment your commodity has undergone or &apos;none&apos; if applicable.</div>
+            <select class="govuk-select" asp-for="Section5.Treatment" asp-items="Html.GetEnumSelectList<TreatmentType>()" aria-describedby="treatment-help-text">
+                <option value="">- Please select -</option>
+            </select>
+            <validation asp-for="Section5.TreatmentOtherText"></validation>
+            <input class="@PageConstants.GdsInputCssClass govuk-!-width-two-thirds" asp-for="Section5.TreatmentOtherText" placeholder="Other..." asp-disabled="Model.Section5.Treatment != TreatmentType.Other" aria-label="Specific text for other type of treatment not listed in pre-defined selection"/>
+        </div>
+
+        <div class="govuk-form-group">
+            <validation asp-for="Section5.Chemical"></validation>
+            <label asp-for="Section5.Chemical" class="@PageConstants.GdsLabelCssClass"></label>
+            <div id="chemical-help-text" class="govuk-hint">Select chemical used in treatment or &apos;none&apos; if applicable.</div>
+            <select class="govuk-select" asp-for="Section5.Chemical" asp-items="Html.GetEnumSelectList<TreatmentChemical>()">
+                <option value="">- Please select -</option>
+            </select>
+            <validation asp-for="Section5.ChemicalOtherText"></validation>
+            <input class="@PageConstants.GdsInputCssClass govuk-!-width-two-thirds" asp-for="Section5.ChemicalOtherText" placeholder="Other..." asp-disabled="Model.Section5.Chemical != TreatmentChemical.Other" aria-label="Specific text for other type of treatment chemical not listed in pre-defined selection"/>
+        </div>
+
+        <div class="govuk-form-group">
+            <validation asp-for="Section5.Concentration"></validation>
+            <label asp-for="Section5.Concentration" class="@PageConstants.GdsLabelCssClass eapc-optional-suffix"></label>
+            <div id="concentration-help-text" class="govuk-hint">If your commodity has undergone chemical treatment add further details about the concentration of this chemical here (quantity and units e.g. grams/m3).</div>
+            <input class="@PageConstants.GdsInputCssClass" asp-for="Section5.Concentration"/>
+        </div>
+
+        <div class="govuk-form-group">
+            <validation asp-for="Section5.Temperature"></validation>
+            <label asp-for="Section5.Temperature" class="@PageConstants.GdsLabelCssClass eapc-optional-suffix"></label>
+            <div id="temperature-help-text" class="govuk-hint">If your commodity has undergone heat treatment add further details about the temperature of this treatment here.</div>
+            <div class="govuk-input__wrapper">
+                <input class="@PageConstants.GdsInputCssClass govuk-input--width-4" asp-for="Section5.Temperature" min="0"/>
+                <div class="govuk-input__suffix" aria-hidden="true">&deg;C</div>
+            </div>
+        </div>
+
+        <div class="govuk-form-group">
+            <validation asp-for="Section5.Duration"></validation>
+            <label asp-for="Section5.Duration" class="@PageConstants.GdsLabelCssClass eapc-optional-suffix"></label>
+            <div id="duration-help-text" class="govuk-hint">If applicable, the duration of any treatments your commodity has undergone can be entered here.</div>
+            <div class="govuk-input__wrapper">
+                <input class="@PageConstants.GdsInputCssClass govuk-input--width-5" asp-for="Section5.Duration" min="0"/>
+                <div class="govuk-input__suffix" aria-hidden="true">Mins</div>
+            </div>
+        </div>
+
+        <div class="govuk-form-group">
+            <validation asp-for="Section5.DateOfTreatment"></validation>
+            <label asp-for="Section5.DateOfTreatment" class="@PageConstants.GdsLabelCssClass eapc-optional-suffix"></label>
+            <input class="@PageConstants.GdsInputCssClass govuk-input--width-10" asp-for="Section5.DateOfTreatment"/>
+        </div>
+        
+        <div class="govuk-form-group">
+            <validation asp-for="Section5.AdditionalInformation"></validation>
+            <label asp-for="Section5.AdditionalInformation" class="@PageConstants.GdsLabelCssClass eapc-optional-suffix"></label>
+            <div id="additional-information-help" class="govuk-hint">For example, wood packaging marking ID, moisture content, name of approved treatment / processing facility, etc.</div>
+            <textarea rows="3" class="govuk-textarea" asp-for="Section5.AdditionalInformation" aria-describedby="additional-information-help"></textarea>
+        </div>
+        @{
+            @if (showSummaryButtonSet)
+            {
+                <vc:next-previous-navigation show-previous="false" show-save="@showSave" show-next="false" show-go-to-summary="true"/>
+            }
+            else
+            {
+                var nextButtonText = showSave ? "Save and continue" : "Continue";
+                <vc:next-previous-navigation show-previous="false" show-save="@showSave" show-next="true" show-go-to-summary="false"  next-button-display-text="@nextButtonText" />
+            }
+        }
+    </form>
+
+@section Scripts
+{
+    <script src="~/js/special-conditions.js" asp-append-version="true"></script>
+}

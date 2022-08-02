@@ -1,0 +1,78 @@
+﻿@using Forestry.Eapc.External.Web.Infrastructure.Display
+@using Forestry.Eapc.External.Web.Models.Application
+@model Forestry.Eapc.External.Web.Models.Application.Application
+
+@{
+    var showSave = Model.State == ApplicationState.Draft;
+    var showSummaryButtonSet = !ViewData.ModelState.IsValid || ViewBag.AllSectionValidationErrorsResolved is not null;
+}
+
+<partial name="Partials/_ConfirmationMessageDisplay" />
+<vc:gds-warning warning-message-html="This information is linked to your profile, it will not appear on your export phytosanitary certificate."/>
+<partial name="Partials/_ModelValidationErrors" />
+
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Professional Operator Number
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Model.Applicant.ProfessionalOperatorNumber
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Contact Email
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @Model.Applicant.Email
+        </dd>
+    </div>
+</dl>
+
+<form method="post" id="applicationForm">
+    <fieldset class="govuk-fieldset">
+        <input class="@PageConstants.GdsInputCssClass" type="hidden" asp-for="Applicant.ProfessionalOperatorNumber" readonly="readonly">
+        <input class="@PageConstants.GdsInputCssClass" type="hidden" asp-for="Applicant.Email" readonly="readonly">
+        <div class="govuk-form-group">
+            <validation asp-for="Applicant.PersonName"></validation>
+            <label asp-for="Applicant.PersonName" class="@PageConstants.GdsLabelCssClass"></label>
+            <input class="@PageConstants.GdsInputCssClass govuk-!-width-two-thirds" asp-for="Applicant.PersonName">
+        </div>
+
+        <div class="govuk-form-group">
+            <validation asp-for="Applicant.CompanyName"></validation>
+            <label asp-for="Applicant.CompanyName" class="@PageConstants.GdsLabelCssClass"></label>
+            <input class="@PageConstants.GdsInputCssClass govuk-!-width-two-thirds" asp-for="Applicant.CompanyName">
+        </div>
+    
+        <div class="govuk-form-group">
+            <validation asp-for="Applicant.Region"></validation>
+            <label asp-for="Applicant.Region" class="@PageConstants.GdsLabelCssClass"></label>
+            <select class="govuk-select" asp-for="Applicant.Region" asp-items="Html.GetEnumSelectList<HomeNation>()">
+                <option value="">- Please select -</option>
+            </select>
+        </div>
+
+        <div class="govuk-form-group">
+            <validation asp-for="Applicant.Telephone"></validation>
+            <label asp-for="Applicant.Telephone" class="@PageConstants.GdsLabelCssClass"></label>
+            <input class="@PageConstants.GdsInputCssClass govuk-input--width-20" asp-for="Applicant.Telephone">
+        </div>
+
+    </fieldset>
+
+    @{
+        
+        @if (showSummaryButtonSet)
+        {
+            <vc:next-previous-navigation show-previous="false" show-save="@showSave" show-next="false" show-go-to-summary="true" />
+        }
+        else
+        {
+            var nextButtonText = showSave ? "Save and continue" : "Continue";
+
+            <vc:next-previous-navigation show-previous="false" show-save="@showSave" show-next="true" show-go-to-summary="false" next-button-display-text="@nextButtonText"/>
+        }
+    }
+</form>

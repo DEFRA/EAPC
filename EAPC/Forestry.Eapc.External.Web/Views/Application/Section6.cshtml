@@ -1,0 +1,129 @@
+﻿@using Forestry.Eapc.External.Web.Infrastructure.Display
+@using Forestry.Eapc.External.Web.Models.Application
+@using Forestry.Eapc.External.Web.Services
+@model Forestry.Eapc.External.Web.Models.Application.Application
+@inject CountryProvider Countries
+@inject AdditionalDeclarationsProvider AdditionalDeclarations
+@{
+
+    var selectListSpecies = AdditionalDeclarations.GetConfiguredSpecies().Select(x => new SelectListItem(x, x));
+
+    var countries = Countries.GetCountries();
+
+    var listOfCountries = countries
+        .Where(x => !"United Kingdom".Equals(x.Name, StringComparison.InvariantCultureIgnoreCase)
+                    && !"Ireland".Equals(x.Name, StringComparison.InvariantCultureIgnoreCase))
+        .Select(x => x.Name)
+        .ToList();
+
+    listOfCountries.Add("Republic of Ireland");
+    listOfCountries.Add("United Kingdom (England)");
+    listOfCountries.Add("United Kingdom (Northern Ireland)");
+    listOfCountries.Add("United Kingdom (Scotland)");
+    listOfCountries.Add("United Kingdom (Wales)");
+    listOfCountries = listOfCountries.OrderBy(x => x).ToList();
+
+    var showSave = Model.State == ApplicationState.Draft;
+    var showSummaryButtonSet = !ViewData.ModelState.IsValid || ViewBag.AllSectionValidationErrorsResolved is not null;
+}
+
+    <partial name="Partials/_ConfirmationMessageDisplay" />
+    <partial name="Partials/_ModelValidationErrors" />
+
+
+    <vc:gds-warning warning-message-assistive-html="Warning."
+        warning-message-html="Details below will be printed on the certificate.<br />Ensure all details are recorded exactly how you want them presented." />    
+
+    <form method="post">
+        
+        <div class="govuk-form-group">
+            <div class="govuk-checkboxes__item">
+                <validation asp-for="Section6.AdditionalDeclarationsNotRequired"></validation>
+                <input asp-for="Section6.AdditionalDeclarationsNotRequired" type="checkbox" class="govuk-checkboxes__input"/>
+                <label asp-for="Section6.AdditionalDeclarationsNotRequired" class="@PageConstants.GdsLabelCssClass govuk-checkboxes__label">An Additional declaration is not required.</label>
+            </div>
+        </div>
+        <div class="govuk-form-group">
+            <validation asp-for="Section6.AdditionalDeclarations"></validation>
+            <label asp-for="Section6.AdditionalDeclarations" class="@PageConstants.GdsLabelCssClass eapc-optional-suffix"></label>
+            <div id="additional-declarations-help-text" class="govuk-hint">An additional declaration is a statement that is required by an importing country that is entered on a phytosanitary certificate which provides specific additional information on a consignment in relation to regulated pests. Your consignment must comply with any additional declarations of the importing country. If you do not know the additional declaration(s) which apply to your consignment and the country to which it is travelling, contact the plant health team directly <a href="mailto:plant.health@forestrycommission.gov.uk">plant.health@forestrycommission.gov.uk</a> or click &apos;Get Suggestions&apos; to use the Additional Declarations suggestion tool.</div>
+            <textarea rows="5" class="govuk-textarea" asp-for="Section6.AdditionalDeclarations" data-role="additional-declarations-text"></textarea>
+            <button type="button" id="show-help" class="govuk-button govuk-button--secondary" data-module="govuk-button">Get suggestions</button>
+        </div>
+        
+        <div id="additional-declarations-search" style="display: none">
+            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible"/>
+            <p class="govuk-body">
+                Select any of the available options then click the <strong>Search</strong> button to retrieve any additional declarations that may apply to your consignment.
+            </p>
+
+            <div class="govuk-form-group">
+                <label class="@PageConstants.GdsLabelCssClass" for="additional-declarations-search-country-of-origin">Country of Origin</label>
+                <input id="additional-declarations-search-country-of-origin" class="@PageConstants.GdsInputCssClass" list="additional-declarations-search-country-of-origin-list" value="United Kingdom (England)" placeholder="Please select"/>
+            </div>
+
+            <div class="govuk-form-group">
+                <label class="@PageConstants.GdsLabelCssClass" for="additional-declarations-search-country-of-destination">Country of Destination</label>
+                <input id="additional-declarations-search-country-of-destination" class="@PageConstants.GdsInputCssClass" list="additional-declarations-search-country-of-destination-list" placeholder="Please select"/>
+            </div>
+
+            <div class="govuk-form-group">
+                <label class="@PageConstants.GdsLabelCssClass" for="additional-declarations-search-species">Species</label>
+                <select id="additional-declarations-search-species" class="@PageConstants.GdsInputCssClass" asp-items="selectListSpecies">
+                    <option value="">- Please select -</option>
+                </select>
+            </div>
+            <div class="govuk-form-group">
+                <label class="@PageConstants.GdsLabelCssClass" for="additional-declarations-search-treatment">Treatment</label>
+                <input type="text" id="additional-declarations-search-treatment" class="@PageConstants.GdsInputCssClass"/>
+            </div>
+            <div class="govuk-form-group">
+                <button type="button" class="govuk-button govuk-button--secondary" id="additional-declaration-trigger">Search</button>
+            </div>
+
+            <div id="additional-declarations-list"></div>
+
+            <div id="additional-declarations-no-results" class="d-none govuk-body" aria-hidden="true">
+                No recommendations were found based on the selected values.
+            </div>
+            <div id="additional-declarations-error" class="d-none govuk-body" aria-hidden="true">
+                Sorry, there was an error trying to retrieve recommendations, please try again.
+            </div>
+
+            <div id="additional-declarations-loading" class="d-none govuk-body" aria-hidden="true">
+                Finding recommendations based on selected values...
+            </div>
+        </div>
+        
+        @{
+            @if (showSummaryButtonSet)
+            {
+                <vc:next-previous-navigation show-previous="false" show-save="@showSave" show-next="false" show-go-to-summary="true"/>
+            }
+            else
+            {
+                var nextButtonText = showSave ? "Save and continue" : "Continue";
+                <vc:next-previous-navigation show-previous="false" show-save="@showSave" show-next="true" show-go-to-summary="false" next-button-display-text="@nextButtonText"/>
+            }
+        }
+
+    </form>
+
+<datalist id="additional-declarations-search-country-of-destination-list">
+    @foreach (var country in listOfCountries)
+    {
+        <option value="@country"></option>
+    }
+</datalist>
+
+<datalist id="additional-declarations-search-country-of-origin-list">
+    @foreach (var country in listOfCountries)
+    {
+        <option value="@country"></option>
+    }
+</datalist>
+
+@section Scripts
+{
+    <script src="~/js/additional-declarations.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,16 @@
+﻿@section backlink{
+    <a asp-action="Index" class="govuk-back-link">Back</a>
+}
+
+<div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-xl">Account Approved</h1>
+    <p class="govuk-body">The user account has been successfully approved and the user may now login and apply for phytosanitary certificates.</p>
+    
+    <form method="get" asp-action="Index">
+        <div class="govuk-button-group">
+            <button class="govuk-button" data-module="govuk-button" type="submit">
+                Approve another account
+            </button>
+        </div>
+    </form>
+</div>

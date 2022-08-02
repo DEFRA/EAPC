@@ -1,0 +1,19 @@
+﻿@using Forestry.Eapc.External.Web.Services
+               
+                 
+<logged-in>
+    @{
+        var userName = new ExternalUser(User).FullName;
+
+        <p class="govuk-body govuk-!-text-align-right govuk-!-font-size-14 govuk-!-margin-top-2 govuk-!-margin-bottom-2">@userName | <a class="govuk-link" asp-controller="Home" asp-action="Logout">Sign out</a></p>
+   
+        
+        <hr class="govuk-section-break govuk-section-break--visible">
+    }
+</logged-in>
+
+@*<not-logged-in>
+    <p class="govuk-body govuk-!-text-align-right govuk-!-font-size-14 govuk-!-margin-top-2 govuk-!-margin-bottom-2">
+        <a class="govuk-link" asp-controller="Home" asp-action="Login">Login</a>
+    </p>
+</not-logged-in>*@

@@ -1,0 +1,135 @@
+﻿@using Forestry.Eapc.External.Web.Configuration
+@using Forestry.Eapc.External.Web.Infrastructure.Display
+@using Forestry.Eapc.External.Web.Models.Application
+@using Forestry.Eapc.External.Web.Services
+@using Microsoft.Extensions.Options
+
+@model Forestry.Eapc.External.Web.Models.Application.Application
+@inject IOptions<SupportingDocumentsSettings> Settings
+@inject FileTypesProvider FileTypesProvider
+
+@{
+    var showSave = Model.State == ApplicationState.Draft;
+    var allowedTypes = (Settings?.Value ?? new SupportingDocumentsSettings()).AllowedFileTypes;
+    var allowedExtensions = allowedTypes.SelectMany(x => x.Extensions).ToArray();
+    var maxFileSize = (Settings?.Value ?? new SupportingDocumentsSettings()).MaxFileSizeBytes;
+    var maxNumberDocs = (Settings?.Value ?? new SupportingDocumentsSettings()).MaxNumberDocuments;
+}
+
+<p class="govuk-body">Documentation to support your application, for example treatment certification, manufacturers statement, previous phytosanitary certificate, bill of lading, pictures of product, etc. may be submitted with your application using this upload tool.</p>
+<p class="govuk-body">Each document must be less than @FileSizeToStringConverter.SizeSuffix(maxFileSize) in size and a maximum of @maxNumberDocs documents may be uploaded to support your application.</p>
+<p class="govuk-body">
+    Only documents of the following types may be uploaded:
+    <ul class="govuk-list govuk-list--bullet">
+        @foreach (var allowedType in allowedTypes)
+        {
+            <li>@allowedType.Description (@string.Join(", ", allowedType.Extensions))</li>
+        }
+    </ul>
+</p>
+
+@if (Model.SupportingDocumentsSection.SupportingDocuments.Count < (Settings?.Value ?? new SupportingDocumentsSettings()).MaxNumberDocuments)
+{
+    <form method="post" enctype="multipart/form-data" asp-action="AttachSupportingDocumentation">
+        
+        <input id="allowed-extensions" aria-hidden="true" class="govuk-visually-hidden" type="hidden" value="@string.Join(", ", allowedExtensions)"/>
+        <input id="allowed-max-size" aria-hidden="true" class="govuk-visually-hidden" type="hidden" value="@maxFileSize"/>
+        <input id="allowed-max-size-description" aria-hidden="true" class="govuk-visually-hidden" type="hidden" value="@FileSizeToStringConverter.SizeSuffix(maxFileSize)"/>
+        <input id="allowed-number-documents" aria-hidden="true" class="govuk-visually-hidden" type="hidden" value="@maxNumberDocs"/>
+        <input id="current-number-documents" aria-hidden="true" class="govuk-visually-hidden" type="hidden" value="@Model.SupportingDocumentsSection.SupportingDocuments.Count"/>
+
+
+        <div class="govuk-form-group" id="file-select-group">
+            <label for="supporting-documentation-files" class="@PageConstants.GdsLabelCssClass">Upload a file</label>
+            <p id="supporting-documentation-files-error" class="govuk-error-message govuk-visually-hidden" aria-hidden="true">
+                <span class="govuk-visually-hidden">Error:</span><span id="file-upload-error-text"></span> 
+            </p>
+            <input type="file" multiple class="custom-file-input govuk-file-upload" id="supporting-documentation-files" name="supportingDocumentationFiles" runat="server"/>
+        </div>
+        <div class="govuk-form-group">
+            <input id="submit-supporting-document" type="submit" class="govuk-button" data-module="govuk-button" name="store-supporting-documents" value="Upload"/>
+        </div>
+    </form>
+}
+
+<div>
+    <p class="govuk-heading-s">Attached documentation</p>
+    
+    @if (Model.SupportingDocumentsSection.SupportingDocuments.Count == 0)
+    {
+        <p class="govuk-body">
+            No supporting documents have been uploaded.
+        </p>
+    }
+    else
+    {
+        <form method="post" asp-action="RemoveSupportingDocumentation">
+
+            <table class="govuk-table" id="documentation-list-table">
+                <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">Name</th>
+                    <th scope="col" class="govuk-table__header">Type</th>
+                    <th scope="col" class="govuk-table__header">File Size</th>
+                    <th scope="col" class="govuk-table__header">Upload Date</th>
+                    <th scope="col" class="govuk-table__header">Action</th>
+                </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                @foreach (var document in Model.SupportingDocumentsSection.SupportingDocuments)
+                {
+                    var fileType = FileTypesProvider.FindFileTypeByMimeTypeWithFallback(document.MimeType).KindOfDocument;
+
+                    <tr class="govuk-table__row" data-id="@document.Identifier">
+                        <td class="govuk-table__cell">@document.Name</td>
+                        <td class="govuk-table__cell">@fileType</td>
+                        <td class="govuk-table__cell">@FileSizeToStringConverter.SizeSuffix(document.Length)</td>
+                        <td class="govuk-table__cell">@DateTimeDisplay.GetDateTimeDisplayString(document.CreationDate!.Value)</td>
+                        <td class="govuk-table__cell">
+                            <input type="hidden" name="documentIdentifier" value="@document.Identifier"/>
+                            <input type="submit" class="govuk-button" data-module="govuk-button" name="delete-supporting-document" value="Remove"/>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+            
+        
+        </form>
+    }
+</div>
+
+<br />
+
+<form method="post">
+    <div class="govuk-form-group">
+        <div class="govuk-checkboxes__item">
+            <validation asp-for="SupportingDocumentsSection.SupportingDocumentationNotRequired"></validation>
+            <input asp-for="SupportingDocumentsSection.SupportingDocumentationNotRequired" type="checkbox" class="govuk-checkboxes__input"/>
+            <label asp-for="SupportingDocumentsSection.SupportingDocumentationNotRequired" class="@PageConstants.GdsLabelCssClass govuk-checkboxes__label">Supporting information is not required.</label>
+        </div>
+    </div>
+    @{
+        var nextButtonText = showSave ? "Save and continue" : "Continue";
+        <vc:next-previous-navigation show-previous="false" show-save="false" show-next="true" show-go-to-summary="false" next-button-display-text="@nextButtonText"/>
+    }
+
+</form>
+
+@section Scripts
+{
+    <partial name="Partials/_DataTablesJs"/>
+    <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js" 
+            asp-fallback-src="~/lib/bsCustomFileInput/bs-custom-file-input-1-3-4.min.js"
+            asp-fallback-test="bsCustomFileInput"
+            crossorigin="anonymous" 
+            language="javascript"
+            integrity="sha256-e0DUqNhsFAzOlhrWXnMOQwRoqrCRlofpWgyhnrIIaPo="></script>
+
+    <script src="~/js/supporting-documentation.js" asp-append-version="true"></script>
+}
+
+@section Css
+{
+    <partial name="Partials/_DataTablesCss"/>
+}

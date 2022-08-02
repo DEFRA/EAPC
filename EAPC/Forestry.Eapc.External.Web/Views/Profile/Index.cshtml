@@ -1,0 +1,144 @@
+﻿@using Forestry.Eapc.External.Web.Infrastructure.Display
+@using Forestry.Eapc.External.Web.Models.Application
+@model Forestry.Eapc.External.Web.Models.Profile.UserProfileModel
+
+<div class="govuk-grid-column-two-thirds">
+
+    <h1 class="govuk-heading-xl">Profile</h1>
+    
+    <details class="govuk-details" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+                Why we need this information
+            </span>
+        </summary>
+        <div class="govuk-details__text">
+            As this is the first time you have accessed the system, and before you can continue with a phytosanitary certificate application, we need you to provide us with some details about yourself and your organisation. You will be asked for this information only once. This information forms your user profile for each export phytosanitary certificate application created.
+            <br/><br/>
+            If you are submitting profile information but are not your organisation&apos;s registered professional operator, your organisation&apos;s registered professional operator will be sent an email asking them to verify your identity. The verification process will only need to be completed once. Once your identity has been verified by the primary contact (professional operator) you will be able to access the Applications menu and apply for export phytosanitary certificates.
+        </div>
+        </details>
+    
+    @if (!ViewData.ModelState.IsValid)
+{
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" data-module="govuk-error-summary">
+        <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is a problem
+        </h2>
+        <div class="govuk-error-summary__body">
+            <div asp-validation-summary="All" class="govuk-error-summary__body"></div>
+        </div>
+    </div>
+}
+
+
+    <form method="post">
+
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                Your details
+            </legend>
+            <div class="govuk-form-group">
+                <label asp-for="FirstName" class="@PageConstants.GdsLabelCssClass eapc-required"></label>
+                <input class="@PageConstants.GdsInputCssClass" asp-for="FirstName"/>
+            </div>
+
+            <div class="govuk-form-group">
+                <label asp-for="LastName" class="@PageConstants.GdsLabelCssClass eapc-required"></label>
+                <input class="@PageConstants.GdsInputCssClass" asp-for="LastName"/>
+            </div>
+
+            <div class="govuk-form-group">
+                <label asp-for="TelephoneNumber" class="@PageConstants.GdsLabelCssClass eapc-required"></label>
+                <input class="@PageConstants.GdsInputCssClass govuk-input--width-20" asp-for="TelephoneNumber"/>
+            </div>
+        </fieldset>
+        
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                Details of your organisation
+            </legend>
+            <div class="govuk-form-group">
+                <label asp-for="ProfessionalOperatorNumber" class="@PageConstants.GdsLabelCssClass eapc-required"></label>
+                <input class="@PageConstants.GdsInputCssClass" asp-for="ProfessionalOperatorNumber" type="tel" autocomplete="tel"/>
+            </div>
+
+            <div class="govuk-form-group">
+                <label asp-for="CompanyName" class="@PageConstants.GdsLabelCssClass eapc-required"></label>
+                <input class="@PageConstants.GdsInputCssClass" asp-for="CompanyName"/>
+            </div>
+
+
+            <div class="govuk-form-group">
+                <label asp-for="AddressLine1" class="@PageConstants.GdsLabelCssClass"></label>
+                <input class="@PageConstants.GdsInputCssClass" asp-for="AddressLine1" autocomplete="address-line1"/>
+            </div>
+
+            <div class="govuk-form-group">
+                <label asp-for="AddressLine2" class="@PageConstants.GdsLabelCssClass"></label>
+                <input class="@PageConstants.GdsInputCssClass" asp-for="AddressLine2" autocomplete="address-line2"/>
+            </div>
+
+
+            <div class="govuk-form-group">
+                <label asp-for="AddressLine3" class="@PageConstants.GdsLabelCssClass"></label>
+                <input class="@PageConstants.GdsInputCssClass govuk-!-width-two-thirds" asp-for="AddressLine3" autocomplete="address-level2"/>
+            </div>
+
+            <div class="govuk-form-group">
+                <label asp-for="AddressLine4" class="@PageConstants.GdsLabelCssClass"></label>
+                <input class="@PageConstants.GdsInputCssClass govuk-!-width-two-thirds" asp-for="AddressLine4"/>
+            </div>
+
+            <div class="govuk-form-group">
+                <label asp-for="PostalCode" class="@PageConstants.GdsLabelCssClass govuk-input--width-10"></label>
+                <input class="@PageConstants.GdsInputCssClass govuk-input--width-10" asp-for="PostalCode"/>
+            </div>
+
+            <div class="govuk-form-group">
+                <label asp-for="HomeNation" class="@PageConstants.GdsLabelCssClass"></label>
+                <select class="govuk-select" asp-for="HomeNation" asp-items="Html.GetEnumSelectList<HomeNation>()">
+                    <option value="">- Please select -</option>
+                </select>
+            </div>
+
+        </fieldset>
+
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                Credit account
+            </legend>
+
+            <p class="govuk-body">To create phytosanitary certificate applications, your organisation must have a credit account with the Forestry Commission.</p>
+            <p class="govuk-body">If your organisation has a credit account reference number, enter it below.</p>
+            <p class="govuk-body">
+                If your organisation does not have a credit account, visit this page <a target="_blank" class="govuk-link" rel="noreferrer noopener" href="https://www.gov.uk/government/publications/apply-to-open-a-registered-traders-credit-account" aria-label="Open the apply for a credit account page.">Apply for a credit account (opens in new tab)</a> for an application form, 
+                details on how to open a credit account with the Forestry Commission (subject to checks), and terms and conditions.
+            </p>
+
+            <div class="govuk-form-group">
+                <label asp-for="CreditReferenceNumber" class="@PageConstants.GdsLabelCssClass"></label>
+                <input class="@PageConstants.GdsInputCssClass govuk-!-width-two-thirds" asp-for="CreditReferenceNumber"/>
+            </div>
+
+            <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" asp-for="AcceptsCreditTermsAndConditions"/>
+                <label asp-for="AcceptsCreditTermsAndConditions" class="govuk-label govuk-checkboxes__label"></label>
+            </div>
+
+            <br/>
+
+            <div class="govuk-form-group">
+                <div class="govuk-button-group">
+
+                    <button data-prevent-double-click="true" type="submit" class="govuk-button" data-module="govuk-button">
+                        Save
+                    </button>
+
+                    <a class="govuk-link" asp-controller="Home" asp-action="Index" title="Abandon changes and go to the home page">Cancel</a>
+
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>

@@ -1,0 +1,140 @@
+﻿@using Forestry.Eapc.External.Web.Infrastructure.Display
+@using Forestry.Eapc.External.Web.Models.Application
+@using Forestry.Eapc.External.Web.Views.Shared.Components.GdsApplicationStatusTag
+@model IReadOnlyCollection<Forestry.Eapc.External.Web.Models.Application.Application>
+
+<div class="govuk-grid-column-full">
+
+    <h1 class="govuk-heading-xl">Your applications</h1>
+
+    <partial name="Partials/_ConfirmationMessageDisplay"/>
+    
+    <p class="govuk-body">This page displays a list of any applications that have been created and linked to your professional operator number.</p>
+    <p class="govuk-body">If you encounter any issues with your applications, or if you require a duplicate paper or digital copy of a previous certificate application, contact FC Plant Health Forestry at <a href="mailto:plant.health@forestrycommission.gov.uk">plant.health@forestrycommission.gov.uk</a></p>
+    
+    <a asp-action="Create" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button">
+        Create New Application
+        <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
+            <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+        </svg>
+        </a>
+
+    <table class="govuk-table" id="application-list-table">
+        <caption class="govuk-table__caption govuk-table__caption--l">Previous applications</caption>
+        <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Application reference</th>
+            <th scope="col" class="govuk-table__header">Your Order Reference</th>
+            <th scope="col" class="govuk-table__header">Status</th>
+            <th scope="col" class="govuk-table__header">Date Created</th>
+            <th scope="col" class="govuk-table__header">Actions</th>
+        </tr>
+        </thead>
+
+        <tbody class="govuk-table__body">
+        @foreach (var application in Model)
+        {
+            <tr data-id="@application.Identifier">
+                <td class="text-break govuk-table__cell" data-order="@application.ReferenceIdentifier.Replace("/","").Replace("UKGB","")">
+                    <a asp-controller="Application" asp-action="Applicant" asp-route-identifier="@application.Identifier" title="View the application with reference @application.ReferenceIdentifier" class="govuk-link">@application.ReferenceIdentifier</a>    
+                    <br/>
+                </td>
+                <td class="text-break govuk-table__cell">@application.Section7.CustomerPurchaseOrderNumber</td>
+                
+                <td class="govuk-table__cell">
+                  <vc:gds-application-status-tag application-state="@application.State"></vc:gds-application-status-tag>
+                </td>
+
+                <td class="govuk-table__cell" data-order="@application.CreationDate.Value.Ticks">@DateTimeDisplay.GetDateDisplayString(application.CreationDate)</td>
+                <td class="govuk-table__cell">
+                    <a asp-controller="ReplicateApplication" asp-action="index" asp-route-identifier="@application.Identifier" 
+                       title="Create a copy of the application with reference @application.ReferenceIdentifier" class="govuk-link">Copy</a>    
+
+                    @if (application.State is ApplicationState.Draft or ApplicationState.Submitted)
+                    {
+                        <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <a asp-controller="WithdrawApplication" asp-action="index" asp-route-identifier="@application.Identifier" 
+                           title="Withdraw the application with reference @application.ReferenceIdentifier" class="govuk-link">Withdraw</a>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset">
+            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                <div class="govuk-checkboxes__item">
+                    <input class="govuk-checkboxes__input" id="show-withdrawn" name="show-withdrawn" type="checkbox" value="hmrc">
+                    <label class="govuk-label govuk-checkboxes__label" for="show-withdrawn">
+                        Include withdrawn applications
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    
+       <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
+  <div class="govuk-accordion__section ">
+    <div class="govuk-accordion__section-header">
+      <h2 class="govuk-accordion__section-heading">
+        <span class="govuk-accordion__section-button" id="accordion-default-heading-1">
+            Help with creating a new application
+        </span>
+      </h2>
+    </div>
+    <div id="accordion-default-content-1" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-1">
+      <p class='govuk-body'>To apply for an export health phytosanitary certificate please click the <b>Create New Application</b> button. Note that this application should only be used for the export of wood / timber products. If you are unsure if this applies to your export consignment please check the <a target="_blank" class="govuk-link" rel="noreferrer noopener" aria-label="Open guidance notes for when to use this site to apply for an export health phytosanitary certificate" href="https://www.gov.uk/guidance/export-wood-wood-products-and-bark-from-great-britain">guidance notes (opens in new tab)</a>. On creation, your new certificate application will be automatically assigned a unique reference number prefixed with <b>UK/GB</b> (left column above).</p>
+    </div>
+  </div>
+  <div class="govuk-accordion__section ">
+    <div class="govuk-accordion__section-header">
+      <h2 class="govuk-accordion__section-heading">
+        <span class="govuk-accordion__section-button" id="accordion-default-heading-2">
+            Help with viewing or editing applications
+        </span>
+      </h2>
+    </div>
+    <div id="accordion-default-content-2" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-2">
+      <p class='govuk-body'>For existing applications, click the <b>Application Reference</b> to view or edit an application. Only applications showing status as <i>draft</i> can be edited. Applications with the status <i>submitted</i> cannot be edited. Submission of an application starts the certificate production process, and a charge will be raised against the application. Therefore, check all applications carefully before submission.</p>
+    </div>
+  </div>
+  <div class="govuk-accordion__section ">
+    <div class="govuk-accordion__section-header">
+      <h2 class="govuk-accordion__section-heading">
+        <span class="govuk-accordion__section-button" id="accordion-default-heading-3">
+            Create a copy as new application
+        </span>
+      </h2>
+    </div>
+    <div id="accordion-default-content-3" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-3">
+      <p class='govuk-body'>To save time creating a new certificate application from scratch, or to set up a template based on a previous application, you can duplicate an existing application by clicking <b>Copy</b> and making changes (e.g. dates, supporting docs etc) accordingly. Note, not every field is carried over into a copied application. Check all fields carefully before submission if creating a new application this way as a charge will be raised on submission. Copies will have a new unique identifying number assigned and can be kept as <i>drafts</i> until you are ready to submit.</p>
+    </div>
+  </div>
+  <div class="govuk-accordion__section ">
+    <div class="govuk-accordion__section-header">
+      <h2 class="govuk-accordion__section-heading">
+        <span class="govuk-accordion__section-button" id="accordion-default-heading-4">
+            Help with withdrawing an application
+        </span>
+      </h2>
+    </div>
+    <div id="accordion-default-content-4" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-4">
+      <p class='govuk-body'>Applications can be withdrawn by clicking <b>Withdraw</b>. Note, once an application has been submitted, the certificate is in production. Therefore, a charge may still be generated, even if the application is withdrawn. Withdrawn applications will be removed from your list of Previous Applications. To view any withdrawn applications, tick the box at the lower left side of the list of Previous Applications.</p>
+    </div>
+  </div>
+</div>
+
+    </div>
+
+@section Scripts
+{
+    <partial name="Partials/_DataTablesJs" />
+    <script src="~/js/applications-index.js" asp-append-version="true"></script>
+}
+
+@section Css
+{
+    <partial name="Partials/_DataTablesCss" />
+}

@@ -1,0 +1,19 @@
+@{
+    ViewData["Title"] = "Sorry, there is a problem with the service - Timber and Wood Products - Application for Export Phytosanitary Certificates - GOV.UK";
+}
+<div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-l">Sorry, there is a problem with the service</h1>
+    <p class="govuk-body">Try again later.</p>
+    <p class="govuk-body">If you were filling in an Application then we will have saved your progress.</p>
+    <p class="govuk-body">
+        Contact the <a class="govuk-link" href="mailto:plant.health@forestrycommission.gov.uk">Forestry Commission team</a> directly to report your concerns.
+    </p>
+    <p class="govuk-body">
+        <logged-in>
+            <p class="govuk-body">Please <a class="govuk-link" asp-controller="Applications" asp-action="Index">click here</a> to return to your list of active applications, or start a new one.</p>
+        </logged-in>
+        <not-logged-in>
+            <p class="govuk-body">Please <a class="govuk-link" asp-controller="Home" asp-action="Index">click here</a> to return to the EAPC Home Page.</p>
+        </not-logged-in>
+    </p>
+</div>

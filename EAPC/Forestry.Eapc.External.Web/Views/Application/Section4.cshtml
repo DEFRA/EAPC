@@ -1,0 +1,175 @@
+﻿@using Forestry.Eapc.External.Web.Infrastructure.Display
+@using Forestry.Eapc.External.Web.Models.Application
+@using Forestry.Eapc.External.Web.Services
+@model Forestry.Eapc.External.Web.Models.Application.Application
+
+@inject CountryProvider Countries
+@inject BotanicalNamesProvider BotanicalNames
+@inject CommodityTypesProvider CommodityTypesProvider
+
+@{
+    var countries = Countries.GetCountries();
+    var selectListOfCommodityTypes = CommodityTypesProvider.GetAll().Select(x => new SelectListItem(x, x)).ToList();
+    var showSave = Model.State == ApplicationState.Draft;
+    var showSummaryButtonSet = !ViewData.ModelState.IsValid || ViewBag.AllSectionValidationErrorsResolved is not null;
+}
+
+    <partial name="Partials/_ConfirmationMessageDisplay" />
+    <partial name="Partials/_ModelValidationErrors" />
+    
+    <vc:gds-warning warning-message-assistive-html="Details below will be printed on the certificate. Ensure all details are recorded exactly how you want them presented"
+        warning-message-html="Details below will be printed on the certificate.<br/>Ensure all details are recorded exactly how you want them presented." />    
+        
+    <form method="post">
+      
+        <div class="govuk-form-group">
+            <validation asp-for="Section4.DescriptionOfProducts"></validation>
+            <label asp-for="Section4.DescriptionOfProducts" class="@PageConstants.GdsLabelCssClass"></label>
+            <div id="consignment-description-help" class="govuk-hint">Number and description and distinguishing marks (if any; include Wood Packaging Registration Number).</div>
+            <textarea rows="3" class="govuk-textarea  govuk-!-width-two-thirds" asp-for="Section4.DescriptionOfProducts" aria-describedby="consignment-description-help"></textarea>
+        </div>
+
+        <div class="govuk-form-group">
+            <validation asp-for="Section4.CommodityType"></validation>
+            <label asp-for="Section4.CommodityType" class="@PageConstants.GdsLabelCssClass"></label>
+            <div id="commodity-type-help" class="govuk-hint">This information will not appear on your export phytosanitary certificate.</div>
+            <select asp-for="Section4.CommodityType" class="govuk-select  govuk-!-width-two-thirds" asp-items="selectListOfCommodityTypes" aria-describedby="commodity-type-help">
+                <option value="">- Please select -</option>
+            </select>
+        </div>
+
+        <div class="govuk-form-group">
+            <validation asp-for="Section4.BotanicalNames"></validation>
+            <label id="botanical-names-label" asp-for="Section4.BotanicalNames" class="@PageConstants.GdsLabelCssClass"></label>
+            <div id="botanical-names-help" class="govuk-hint">Note: You may select a common / botanical name from the list and / or enter free text into this field. Character limit is 50 characters per entry. You may select up to 20 species to appear on your certificate by selecting &apos;add another&apos;</div>
+
+            <div>
+                @{
+                    var botanicalNames = Model.Section4.BotanicalNames.Length == 0
+                        ? new[] { string.Empty }
+                        : Model.Section4.BotanicalNames;
+
+                    foreach (var botanicalName in botanicalNames)
+                    {
+                            <input class="@PageConstants.GdsInputCssClass" asp-for="Section4.BotanicalNames" list="botanical-names-data-list" value="@botanicalName" aria-describedby="botanical-names-help" aria-labelledby="botanical-names-label" maxlength="50" placeholder="Please select from list or enter details if the species you want are not in the list"/>
+                    }
+                }
+                <button type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button" id="botanical-names-add-button" data-max-count="20" @(Model.Section4.BotanicalNames.Length >= 20 ? "disabled=\"disabled\"" : string.Empty)>Add Another</button>
+            </div>
+        </div>
+
+        <div class="govuk-form-group">
+            <validation asp-for="Section4.WhereGrowns"></validation>
+            <label id="where-grown-label" asp-for="Section4.WhereGrowns" class="@PageConstants.GdsLabelCssClass"></label>
+            <div id="consignment-where-grown-help" class="govuk-hint">
+                Country and/ or region, area of origin.  Give details of region or area if known.  State &apos;Pest Free Area&apos; in addition to, for example, &apos;United Kingdom (Scotland)&apos; if the material is conifer and originates in the Great Britain Pest Free Area in the West Coast of Scotland.   State which country, region or area of country, if origin is overseas.  Note: you may select a country from the list and or enter text into this field.  Character limit is 50 characters per entry.  You may select up to 5 places of origin by selecting &apos;add another&apos;.
+            </div>
+            <div>
+                @{
+                    var whereGrowns = Model.Section4.WhereGrowns.Length == 0
+                        ? new[] { string.Empty }
+                        : Model.Section4.WhereGrowns;
+
+                    foreach (var whereGrown in whereGrowns)
+                    {
+                            <input class="@PageConstants.GdsInputCssClass" asp-for="Section4.WhereGrowns" aria-describedby="consignment-where-grown-help" aria-labelledby="where-grown-label" list="where-grown-data-list" value="@whereGrown" maxlength="50" placeholder="Please select from list or enter free text"/>
+                    }
+                }
+                <button type="button" class="govuk-button govuk-button--secondary" id="where-grown-add-button" @(Model.Section4.WhereGrowns.Length >= 5 ? "disabled=\"disabled\"" : string.Empty)>Add Another</button>
+            </div>
+        </div>
+
+        <div class="govuk-form-group">
+            <validation asp-for="Section4.CertificateNumbersFromCountryOfOrigin"></validation>
+            <label asp-for="Section4.CertificateNumbersFromCountryOfOrigin" class="@PageConstants.GdsLabelCssClass eapc-optional-suffix"></label>
+            <div>
+                <textarea rows="3" class="govuk-textarea  govuk-!-width-two-thirds" asp-for="Section4.CertificateNumbersFromCountryOfOrigin"></textarea>
+            </div>
+        </div>
+
+        <div class="govuk-form-group">
+            <validation asp-for="Section4.Quantity"></validation>
+            <label class="@PageConstants.GdsLabelCssClass eapc-required">Quantity</label>
+            <div id="consignment-quantity-help" class="govuk-hint">You can enter multiple quantities by selecting &apos;add another&apos;</div>
+            <div data-purpose="quantity-container">
+                @{
+                    var quantities = Model.Section4.Quantity;
+                    if (quantities.Count == 0)
+                    {
+                        quantities.Add(new Quantity());
+                    }
+
+                    for (var i = 0; i < quantities.Count; i++)
+                    {
+                            <div>
+                                <input type="number" step="0.0001" class="@PageConstants.GdsInputCssClass govuk-input--width-10 eapc-number-no-buttons " asp-for="Section4.Quantity[i].Amount" min="0" aria-label="Quantity number of units">
+                                <select class="govuk-select" asp-for="Section4.Quantity[i].Unit" data-purpose="quantity-unit-selection" aria-label="Quantity type of units">
+                                    <option value="">- Please select unit -</option>
+                                    <option value="KG">KG</option>
+                                    <option value="KGNet">KG (net)</option>
+                                    <option value="KGGross">KG (gross)</option>
+                                    <option value="M3">M&sup3;</option>
+                                    <option value="Other">Other (please specify)</option>
+                                </select>
+                                <input type="text" class="@PageConstants.GdsInputCssClass  govuk-!-width-two-thirds" asp-for="Section4.Quantity[i].OtherText" placeholder="Other..." asp-disabled="quantities[i].Unit != QuantityUnit.Other" aria-label="Specific text for other type of quantity unit not listed in pre-defined selection"/>
+                            </div>
+                    }
+                }
+                <button type="button" class="govuk-button govuk-button--secondary" id="quantity-add-button">Add Another</button>
+            </div>
+        </div>
+
+        <div class="govuk-form-group">
+            <validation asp-for="Section4.MeansOfConveyance"></validation>
+
+            <label asp-for="Section4.MeansOfConveyance" class="@PageConstants.GdsLabelCssClass eapc-required">Means of conveyance</label>
+            <div id="means-of-conveyance-help" class="govuk-hint">Method by which the consignment is to leave the port of export and arrive at the port of destination.</div>
+            <select class="govuk-select" asp-for="Section4.MeansOfConveyance" asp-items="Html.GetEnumSelectList<TransportType>()">
+                <option value="">- Please select -</option>
+            </select>
+            <validation asp-for="Section4.MeansOfConveyanceOtherText"></validation>
+            <input type="text" class="@PageConstants.GdsInputCssClass  govuk-!-width-two-thirds" asp-for="Section4.MeansOfConveyanceOtherText" placeholder="Other..." asp-disabled="Model.Section4.MeansOfConveyance != TransportType.Other" aria-label="Specific text for other type of means of conveyance not listed in pre-defined selection"/>
+        </div>
+        
+        @{
+                @if (showSummaryButtonSet)
+            {
+                    <vc:next-previous-navigation show-previous="false" show-save="@showSave" show-next="false" show-go-to-summary="true" />
+            }
+            else
+            {
+                var nextButtonText = showSave ? "Save and continue" : "Continue";
+                    <vc:next-previous-navigation show-previous="false" show-save="@showSave" show-next="true" show-go-to-summary="false" next-button-display-text="@nextButtonText"/>
+            }
+        }
+    </form>
+
+<datalist id="botanical-names-data-list">
+    @foreach (var botanicalName in BotanicalNames.GetBotanicalNames())
+    {
+        <option value="@botanicalName"></option>
+    }
+</datalist>
+
+<datalist id="where-grown-data-list">
+    @foreach (var country in countries)
+    {
+        if (!"United Kingdom".Equals(country.Name, StringComparison.InvariantCultureIgnoreCase))
+        {
+            <option value="@country.Name"></option>
+        }
+        else
+        {
+            <option value="United Kingdom (England)"></option>
+            <option value="United Kingdom (Northern Ireland)"></option>
+            <option value="United Kingdom (Scotland)"></option>
+            <option value="United Kingdom (Wales)"></option>
+        }
+    }
+</datalist>
+
+
+@section Scripts
+{
+    <script src="~/js/consignment-detail.js" asp-append-version="true"></script>
+}

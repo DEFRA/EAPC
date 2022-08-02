@@ -1,0 +1,122 @@
+﻿@using Forestry.Eapc.External.Web.Infrastructure.Display
+@using Forestry.Eapc.External.Web.Models.Application
+@using Forestry.Eapc.External.Web.Services
+@model Forestry.Eapc.External.Web.Models.Application.Application
+
+@{
+    var showSave = Model.State == ApplicationState.Draft;
+    var showSummaryButtonSet = !ViewData.ModelState.IsValid || ViewBag.AllSectionValidationErrorsResolved is not null;
+}
+
+    <partial name="Partials/_ConfirmationMessageDisplay" />
+    <partial name="Partials/_ModelValidationErrors" />
+
+    <p class="govuk-body">
+        Complete this section to provide details of where and how you want the completed certificate to be sent.
+    </p>
+
+<partial name="Partials/_UserProfileHiddenElements" model="new ExternalUser(User)" />
+
+<form method="post">
+    <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+            <h2 class="govuk-fieldset__heading">
+                Delivery Address (of where the certificate will be sent)
+            </h2>
+        </legend>
+
+        <div class="govuk-form-group">
+            <button type="button" class="govuk-button govuk-button--secondary" data-purpose="PopulateUserDetail">Use contact details</button>
+        </div>
+
+        <div>
+            <div class="govuk-form-group">
+                <validation asp-for="Section7.CertificateDeliveryAddress.ContactName"></validation>
+                <label asp-for="Section7.CertificateDeliveryAddress.ContactName" class="@PageConstants.GdsLabelCssClass"></label>
+                <input class="@PageConstants.GdsInputCssClass" asp-for="Section7.CertificateDeliveryAddress.ContactName" data-user-profile-source="FullName">
+            </div>
+            <div class="govuk-form-group">
+                <validation asp-for="Section7.CertificateDeliveryAddress.Line1"></validation>
+                <label asp-for="Section7.CertificateDeliveryAddress.Line1" class="@PageConstants.GdsLabelCssClass"></label>
+                <input class="@PageConstants.GdsInputCssClass" asp-for="Section7.CertificateDeliveryAddress.Line1" data-user-profile-source="StreetAddressLine1">
+            </div>
+            <div class="govuk-form-group">
+                <validation asp-for="Section7.CertificateDeliveryAddress.Line2"></validation>
+                <label asp-for="Section7.CertificateDeliveryAddress.Line2" class="@PageConstants.GdsLabelCssClass"></label>
+                <input class="@PageConstants.GdsInputCssClass" asp-for="Section7.CertificateDeliveryAddress.Line2" data-user-profile-source="StreetAddressLine2">
+            </div>
+            <div class="govuk-form-group">
+                <validation asp-for="Section7.CertificateDeliveryAddress.Line3"></validation>
+                <label asp-for="Section7.CertificateDeliveryAddress.Line3" class="@PageConstants.GdsLabelCssClass"></label>
+                <input class="@PageConstants.GdsInputCssClass govuk-!-width-two-thirds" asp-for="Section7.CertificateDeliveryAddress.Line3" data-user-profile-source="StreetAddressLine3">
+            </div>
+            <div class="govuk-form-group">
+                <validation asp-for="Section7.CertificateDeliveryAddress.Line4"></validation>
+                <label asp-for="Section7.CertificateDeliveryAddress.Line4" class="@PageConstants.GdsLabelCssClass"></label>
+                <input class="@PageConstants.GdsInputCssClass govuk-!-width-two-thirds" asp-for="Section7.CertificateDeliveryAddress.Line4" data-user-profile-source="StreetAddressLine4">
+            </div>
+            <div class="govuk-form-group">
+                <validation asp-for="Section7.CertificateDeliveryAddress.PostalCode"></validation>
+                <label asp-for="Section7.CertificateDeliveryAddress.PostalCode" class="@PageConstants.GdsLabelCssClass"></label>
+                <div id="delivery-postcode-type-help" class="govuk-hint">This is the address within GB to which the certificate will be posted.</div>
+                <input class="@PageConstants.GdsInputCssClass govuk-input--width-10" asp-for="Section7.CertificateDeliveryAddress.PostalCode" data-user-profile-source="PostalCode" aria-describedby="delivery-postcode-type-help">
+            </div>
+        </div>
+    </fieldset>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Applicant.Email))
+        {
+            <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                    <h2 class="govuk-fieldset__heading">
+                        Request a Copy
+                    </h2>
+                </legend>
+
+                <div class="govuk-checkboxes__item">
+                    <input asp-for="Section7.PdfCopyRequested" type="checkbox" class="govuk-checkboxes__input"/>
+                    <label asp-for="Section7.PdfCopyRequested" class="@PageConstants.GdsLabelCssClass govuk-checkboxes__label">Request a PDF copy of the issued phytosanitary certificate to be emailed to @Model.Applicant.Email</label>
+                </div>
+            </fieldset>
+
+        }
+        <br/>
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                <h2 class="govuk-fieldset__heading">
+                    Customer Details
+                </h2>
+            </legend>
+            
+            <div class="govuk-form-group">
+                <validation asp-for="Section7.CustomerPurchaseOrderNumber"></validation>
+                <label asp-for="Section7.CustomerPurchaseOrderNumber" class="@PageConstants.GdsLabelCssClass eapc-optional-suffix"></label>
+                <div id="customer-purchase-order-number-help" class="govuk-hint">This is your internal reference number, e.g., purchase order number, shipping number, etc.</div>
+                <input class="@PageConstants.GdsInputCssClass" asp-for="Section7.CustomerPurchaseOrderNumber" aria-describedby="customer-purchase-order-number-help">
+            </div>
+
+            <div class="govuk-form-group">
+                <validation asp-for="Section7.CustomerCreditNumber"></validation>
+                <label asp-for="Section7.CustomerCreditNumber" class="@PageConstants.GdsLabelCssClass eapc-required"></label>
+                <input class="@PageConstants.GdsInputCssClass" asp-for="Section7.CustomerCreditNumber">
+            </div>
+        </fieldset>
+
+        @{
+            @if (showSummaryButtonSet)
+            {
+                <vc:next-previous-navigation show-previous="false" show-save="@showSave" show-next="false" show-go-to-summary="true"/>
+            }
+            else
+            {
+                var nextButtonText = showSave ? "Save and continue" : "Continue";
+                <vc:next-previous-navigation show-previous="false" show-save="@showSave" show-next="true" show-go-to-summary="false" next-button-display-text="@nextButtonText"/>
+            }
+        }
+
+    </form>
+
+@section Scripts
+{
+    <script src="~/js/application-use-user-detail.js" asp-append-version="true"></script>
+}

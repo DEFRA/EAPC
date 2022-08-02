@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="govuk-grid-column-full">
+    
+    <h class="govuk-heading-xl">Apply for Timber and Wood Products Exports Certification Service</h>
+    
+    <a asp-action="Login" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button">
+        Login to start your applications
+        <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
+            <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+        </svg>
+    </a>
+
+    <logged-in>
+        <h2 class="govuk-heading-l">Apply</h2>
+        <a asp-controller="Applications" asp-action="Index" role="button" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button">
+            Start new or view existing online applications
+            <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
+                <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+            </svg></a>
+    </logged-in>
+
+    <not-logged-in>
+        <h3 class="govuk-heading-m">First time service users - What you need for system registration</h3>
+        <p class="govuk-body">To be able to use this system to apply to the Forestry Commission for an export phytosanitary certificate for timber and wood products:</p>
+        <ol class="govuk-list govuk-list--number">
+            <li>
+                you will need to be registered as a professional operator or authorised by your organisation’s professional operator to use this system. Therefore, you will need to have your company’s
+                professional operator reference number available to complete the sign-up process (first use only). Please check the following link if you need to
+                <a target="_blank" aria-label="Open guidance notes for when to register as a professional operator" class="govuk-link" rel="noreferrer noopener" href="https://www.gov.uk/guidance/export-wood-wood-products-and-bark-from-great-britain#register-as-a-professional-operator">
+                    register as a professional operator, or check the registration guidance (opens in new tab)</a>.
+            </li>
+            <li>
+                you will need to have a Forestry Commission credit account and know the FC credit account number assigned for your organisation (first use only). If your company does not already have a Forestry Commission credit account, an application
+                for a credit account can be made via the following link <a target="_blank" aria-label="Apply for a registered traders credit account" class="govuk-link" rel="noreferrer noopener"  href="https://www.gov.uk/government/publications/apply-to-open-a-registered-traders-credit-account">Apply for a credit account (opens in new tab)</a>.
+                If you have any queries relating to FC Credit Accounts, contact the Forestry England credit account department at <a href="mailto:credit.management@forestryengland.uk">credit.management@forestryengland.uk</a>
+            </li>
+        </ol>
+        <p class="govuk-body">When you have your organisation&apos;s Professional Operator number and Credit Account number you may sign-up to use this system by following the <b>login</b> link above and selecting <b>sign up now</b>.</p>
+        <p class="govuk-body">Once your professional operator identification has been successfully validated you will be able to sign in and out of the system for future applications using your email address and password only.</p>
+    </not-logged-in>
+
+    <h3 class="govuk-heading-m">Applications for re-forwarding certificates:</h3>
+    <p class="govuk-body">Currently, only applications for new export certificates can be made through this system. If the material was imported to Great Britain with a phytosanitary certificate and you plan to export it again without further changes to the consignment, the Forestry Commission may suggest that you get a re-forwarding phytosanitary certificate. The Forestry Commission will let you know if a re-forwarding phytosanitary certificate is more appropriate when you apply for a phytosanitary certificate.</p>
+    <p class="govuk-body">Re-forwarding phytosanitary certificates only apply if the consignment has <strong>not</strong> been:</p>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>stored</li>
+        <li>split up</li>
+        <li>combined with other consignments</li>
+        <li>repackaged</li>
+    </ul>
+    <p class="govuk-body">If the material you intend to export was imported into the UK with a phytosanitary certificate and is eligible for a re-forwarding certificate, please contact the Forestry Commission team directly at <a href="mailto:plant.health@forestrycommission.gov.uk">plant.health@forestrycommission.gov.uk</a></p>
+    
+    <key-contact>
+        <h3 class="govuk-heading-m">Authorising other users:</h3>
+        <p class="govuk-body">If other export certificate service users within your organisation register to use this system referencing your unique Professional Operator number then you, as the primary contact, will be sent an email asking that you verify the identity of the applicant. This can be done by clicking on a link within the email received when a new user in your organisation signs-up to register to use the system. A link to the Verify User Profile page can also be found <a asp-controller="Accounts" asp-action="Index">here</a>.</p>
+    </key-contact>
+</div>

@@ -1,0 +1,28 @@
+﻿@model Forestry.Eapc.External.Web.Views.Shared.Components.SectionNavigationMenu.SectionNavigationMenuViewComponentModel
+
+<ul class="app-section-nav-list">
+    
+    @{
+        foreach (var sectionItem in Model.SectionNavigationLinksModel.OrderBy(x=>x.SectionNumber))
+        {
+            var activeClass = sectionItem.IsCurrent ? "app-subnav-section-item-current" : "";
+
+            string statusClass;
+
+            if (sectionItem.DisplaySectionState)
+            {
+                statusClass = sectionItem.HasErrors ? "app-subnav-section-item-has-errors" : "app-subnav-section-item-has-no-errors";
+            }
+            else
+            {
+                statusClass = "app-subnav-section-item-no-state";
+            }
+
+            <li class="app-subnav-section-item @activeClass @statusClass">
+                <a asp-action="@sectionItem.SectionAction" asp-controller="Application" class="govuk-link govuk-!-font-size-14 section-nav-link govuk-link--no-visited-state govuk-link--no-underline">
+                   @sectionItem.SectionNumber. @sectionItem.SectionDisplayName
+                </a>
+            </li>   
+        }
+    }
+</ul>

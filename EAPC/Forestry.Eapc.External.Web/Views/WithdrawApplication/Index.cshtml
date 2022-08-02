@@ -1,0 +1,78 @@
+﻿@using Forestry.Eapc.External.Web.Infrastructure.Display
+@using Forestry.Eapc.External.Web.Models.Application
+@model Forestry.Eapc.External.Web.Models.Application.Application
+
+<div class="govuk-grid-column-two-thirds">
+
+    <h1 class="govuk-heading-xl">Withdraw Application</h1>
+    
+    <vc:gds-warning warning-message-html="Please verify the details below and confirm that you wish to Withdraw this application. This action cannot be undone, however a new application may be created based on the information provided in this one." />    
+
+    <form method="post" asp-action="Withraw">
+
+        <table class="govuk-table">
+        
+            <tbody class="govuk-table__body">
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">@Html.DisplayNameFor(x => x.ReferenceIdentifier)</th>
+                <td class="govuk-table__cell">@Html.DisplayTextFor(x => x.ReferenceIdentifier)</td>
+            </tr>
+            
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">@Html.DisplayNameFor(x => x.State)</th>
+                <td class="govuk-table__cell">@Html.DisplayTextFor(x => x.State)</td>
+            </tr>
+         
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">@Html.DisplayNameFor(x => x.CreationDate)</th>
+                <td class="govuk-table__cell">@DateTimeDisplay.GetDateDisplayString(Model.CreationDate)</td>
+            </tr>
+            
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">Services Required</th>
+                @if (Model.Applicant.ExportStatus.HasValue)
+                {
+                    @if (Model.Applicant.ExportStatus == ExportStatus.New)
+                    {
+                        <td class="govuk-table__cell">I / We require an export phytosanitary certificate for regulated timber and / or wood products and / or isolated bark</td>
+                    }
+                    else
+                    {
+                        <td class="govuk-table__cell">I / We require a reforwarding phytosanitary certificate for regulated timber and / or wood products and / or isolated bark.</td>
+                    }
+                }
+                else
+                {
+                    <td class="govuk-table__cell">&nbsp;</td>
+                }
+            </tr>
+            
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">@Html.DisplayNameFor(x => x.Section1.ExporterName)</th>
+                <td class="govuk-table__cell">@Html.DisplayTextFor(x => x.Section1.ExporterName)</td>
+            </tr>
+            
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">@Html.DisplayNameFor(x => x.Section3.NameOfConsignee)</th>
+                <td class="govuk-table__cell">@Html.DisplayTextFor(x => x.Section3.NameOfConsignee)</td>
+            </tr>
+            
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">@Html.DisplayNameFor(x => x.Section4.DescriptionOfProducts)</th>
+                <td class="govuk-table__cell">@Html.DisplayTextFor(x => x.Section4.DescriptionOfProducts)</td>
+            </tr>
+            </tbody>
+        </table>
+
+       
+        <div class="govuk-button-group">
+
+            <button data-prevent-double-click="true" type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button">
+                Withdraw Application
+            </button>
+            
+            <a class="govuk-link" asp-controller="Applications" asp-action="Index">Cancel</a>
+
+        </div>
+    </form>
+</div>

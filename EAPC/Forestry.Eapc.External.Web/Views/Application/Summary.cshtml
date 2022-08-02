@@ -1,0 +1,83 @@
+﻿@using FluentValidation.Results
+@using Forestry.Eapc.External.Web.Services
+@using Forestry.Eapc.External.Web.Services.Validation
+@model Forestry.Eapc.External.Web.Models.Application.Application
+
+@{
+    List<ValidationFailure> validationFailures = ViewBag.ValidationFailures ?? new List<ValidationFailure>(0);
+}
+
+<div>
+
+    @if (validationFailures.Any())
+    {
+        <vc:gds-warning warning-message-assistive-html="We found some issues with the content of your application which we have listed below, these must be reviewed and corrected before submission."
+                        warning-message-html="We found some issues with the content of your application which we have listed below, these must be reviewed and corrected before submission." />    
+
+        <p class="govuk-body govuk-!-font-weight-bold">You will not be able to submit your application with questions which have not been answered.</p>
+
+        <p class="govuk-body">Review each issue and click the change link to the right side to go to the question requiring review.</p>
+
+        @foreach (var validationErrorGroup in validationFailures.Where(x => x.CustomState != null).GroupBy(x => x.PropertyName.Split('.')[0]).OrderBy(x => x.Key))
+        {
+            var section = ApplicationFormSectionsMetaModel.GetSectionItem(validationErrorGroup.Key);
+            var displayName = section.SectionNumber +". "+ section.SectionDisplayName;
+            <div class="govuk-!-padding-bottom-6">
+            <h2 class="govuk-heading-l">@displayName</h2>
+
+            <dl class="govuk-summary-list">
+                @foreach (var e in validationErrorGroup)
+                {
+                    if (e.CustomState is CustomValidationState state)
+                    {
+                        var initialFragmentAsHtmlElementId = e.PropertyName.Replace(".", "_");
+
+                        var fragmentLink = initialFragmentAsHtmlElementId != "Section4_Quantity" 
+                            ? initialFragmentAsHtmlElementId 
+                            : "Section4_Quantity_0__Unit";
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                @e.ErrorMessage
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                            @if (e.ErrorCode == "NotEmptyValidator" || e.ErrorCode =="NotNullValidator")
+                            {
+                                <span>Not provided</span>
+                            }
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a class="govuk-link" asp-action="@state.SectionAction" asp-fragment="@fragmentLink" asp-route-identifier="@Model.Identifier" asp-route-showerrors="true">
+                                    Change<span class="govuk-visually-hidden">@e.PropertyName.Split('.')[1]</span>
+                                </a>
+                            </dd>
+                        </div>
+                    }
+                }
+            </dl>
+            </div>
+        }
+
+        <div>
+            <form method="post">
+                <vc:next-previous-navigation show-previous="false" show-save="false" show-go-to-summary="false" show-next="true" next-button-display-text="Continue"/>
+            </form>
+        </div>
+    }
+    else
+    {
+        <div class="govuk-body">
+            <p>The content of your application has been checked and no issues have been found, meaning that it can now be submitted.</p>
+        </div>
+
+        <vc:gds-warning warning-message-assistive-html="Note that these checks only covered basic data validation and cannot account for the validity or correctness of the information you have provided in this form. Your application may still be rejected, and you may still be charged, if we find issues during our review of your application."
+                        warning-message-html="Note that these checks only covered basic data validation and cannot account for the validity or correctness of the information you have provided in this form. Your application may still be rejected, and you may still be charged, if we find issues during our review of your application." />    
+
+        <div>
+            <form method="post">
+                <vc:next-previous-navigation show-previous="false" show-save="false" show-go-to-summary="false" show-next="true" next-button-display-text="Continue"/>
+            </form>
+        </div>
+    }
+
+</div>

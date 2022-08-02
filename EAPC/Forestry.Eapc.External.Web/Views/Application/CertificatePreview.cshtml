@@ -1,0 +1,32 @@
+﻿@model Forestry.Eapc.External.Web.Models.Application.Application
+@{
+    var showSummaryButtonSet = !ViewData.ModelState.IsValid || ViewBag.AllSectionValidationErrorsResolved is not null;
+}
+
+<form method="post">
+    
+    
+    <p class="govuk-body">You have the option to see a preview of the certificate based on data you have provided in this application by clicking the link below.</p>
+    
+  
+    <div>
+        <a class="govuk-link" rel="noreferrer noopener" target="_blank" asp-action="Preview" asp-route-identifier="@Model.Identifier">View PDF Certificate (opens in new tab)</a>
+    </div>
+    
+    <p class="govuk-inset-text">
+        The preview may take up to a minute to generate. It will appear as a PDF document. 
+    </p>
+
+    @{
+        @if (showSummaryButtonSet)
+        {
+            <vc:next-previous-navigation show-previous="false" show-save="false" show-next="false" show-go-to-summary="true" next-button-display-text="Continue"/>
+        }
+        else
+        {
+            <vc:next-previous-navigation show-previous="false" show-save="false" show-next="true" show-go-to-summary="false" next-button-display-text="Continue"/>
+        }
+    }
+    
+
+</form>

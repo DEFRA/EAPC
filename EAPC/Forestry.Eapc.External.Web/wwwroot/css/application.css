@@ -1,0 +1,41 @@
+﻿.progress-bar {
+    background-color: rgb(0, 137, 56);
+}
+
+
+.list-group-item.active {
+    background-color: rgba(0, 137, 56, 0.1);
+    border-color: rgb(0, 137, 56)
+}
+
+.btn-primary.disabled, .btn-primary:disabled,
+.btn-primary:hover, .btn-primary:disabled:hover {
+    background-color: rgba(0, 137, 56, 0.2);
+    border-color: rgb(0, 137, 56);
+}
+
+.list-group-overflow {
+    overflow-y: auto;
+    max-height: 16rem;
+}
+
+/* these two styles give multiple text inputs a top margin for all but the first one in a div */
+.multi-textbox-container > input:first-child {
+    margin-top: 0 !important;
+}
+.multi-textbox-container > input[type="text"] {
+    margin-top: 0.25rem;
+}
+
+/* these two styles give quantity inputs a top margin for all but the first one in a div */
+.quantity-container > div:first-child {
+    margin-top: 0 !important;
+}
+
+.quantity-container > div {
+    margin-top: 0.25rem;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+}

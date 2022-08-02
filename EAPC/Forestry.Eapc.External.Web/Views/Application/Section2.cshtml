@@ -1,0 +1,87 @@
+﻿@using Forestry.Eapc.External.Web.Infrastructure.Display
+@using Forestry.Eapc.External.Web.Models.Application
+@model Forestry.Eapc.External.Web.Models.Application.Application
+
+@{
+    var showSave = Model.State == ApplicationState.Draft;
+    var showSummaryButtonSet = !ViewData.ModelState.IsValid || ViewBag.AllSectionValidationErrorsResolved is not null;
+}
+
+    <partial name="Partials/_ConfirmationMessageDisplay" />
+    <partial name="Partials/_ModelValidationErrors" />
+
+    <vc:gds-warning warning-message-html="Your consignment may require an inspection." warning-message-assistive-html="Your consignment may require an inspection."/>    
+
+    <div class="govuk-inset-text">
+        If the site where the goods are currently held is at a different location to the exporter details already provided in <a class="govuk-link" asp-action="Section1">section 2 (Exporter Details)</a>, complete this section detailing the address or any other relevant information about the location for the inspection in the boxes below.
+        <br/>The information below will not appear on your export phytosanitary certificate.
+    </div>
+    
+    <form method="post">
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h1 class="govuk-fieldset__heading">
+                    Inspection Location
+                </h1>
+            </legend>
+            <div class="govuk-form-group">
+                <validation asp-for="Section2.GoodsInspectionAddress.Line1"></validation>
+                <label asp-for="Section2.GoodsInspectionAddress.Line1" class="@PageConstants.GdsLabelCssClass"></label>
+                <input class="@PageConstants.GdsInputCssClass" asp-for="Section2.GoodsInspectionAddress.Line1" autocomplete="address-line1">
+            </div>
+            <div class="govuk-form-group">
+                <validation asp-for="Section2.GoodsInspectionAddress.Line2"></validation>
+                <label asp-for="Section2.GoodsInspectionAddress.Line2" class="@PageConstants.GdsLabelCssClass"></label>
+                <input class="@PageConstants.GdsInputCssClass" asp-for="Section2.GoodsInspectionAddress.Line2" autocomplete="address-line2">
+            </div>
+            <div class="govuk-form-group">
+                <validation asp-for="Section2.GoodsInspectionAddress.Line3"></validation>
+                <label asp-for="Section2.GoodsInspectionAddress.Line3" class="@PageConstants.GdsLabelCssClass"></label>
+                <input class="@PageConstants.GdsInputCssClass govuk-!-width-two-thirds" autocomplete="address-level2" asp-for="Section2.GoodsInspectionAddress.Line3">
+            </div>
+            <div class="govuk-form-group">
+                <validation asp-for="Section2.GoodsInspectionAddress.Line4"></validation>
+                <label asp-for="Section2.GoodsInspectionAddress.Line4" class="@PageConstants.GdsLabelCssClass"></label>
+                <input class="@PageConstants.GdsInputCssClass govuk-!-width-two-thirds" asp-for="Section2.GoodsInspectionAddress.Line4">
+            </div>
+            <div class="govuk-form-group">
+                <validation asp-for="Section2.GoodsInspectionAddress.PostalCode"></validation>
+                <label asp-for="Section2.GoodsInspectionAddress.PostalCode" class="@PageConstants.GdsLabelCssClass"></label>
+                <input class="@PageConstants.GdsInputCssClass govuk-input--width-10" asp-for="Section2.GoodsInspectionAddress.PostalCode">
+            </div>
+
+            <div class="govuk-form-group">
+                <h1 class="govuk-label-wrapper">
+                    <validation asp-for="Section2.AdditionalInformation"></validation>
+                    <label class="govuk-label govuk-label--l" asp-for="Section2.AdditionalInformation"></label>
+                </h1>
+                <div id="more-detail-hint" class="govuk-hint">
+                    Any other information relevant to the goods inspection, e.g., location grid reference, etc. This information will not appear on your export phytosanitary certificate.
+                </div>
+                <textarea class="govuk-textarea" asp-for="Section2.AdditionalInformation" rows="8" aria-describedby="more-detail-hint"></textarea>
+            </div>
+            <div class="govuk-form-group">
+                <div class="govuk-checkboxes__item">
+                    <input asp-for="Section2.InspectionNotRequired" type="checkbox" class="govuk-checkboxes__input"/>
+                    <label asp-for="Section2.InspectionNotRequired" class="@PageConstants.GdsLabelCssClass govuk-checkboxes__label">Inspection site is the same address as in Section 2 (Exporter Details)</label>
+                </div>
+            </div>
+
+        </fieldset>
+        @{
+            @if (showSummaryButtonSet)
+            {
+                <vc:next-previous-navigation show-previous="false" show-save="@showSave" show-next="false" show-go-to-summary="true" />
+            }
+            else
+            {
+                var nextButtonText = showSave ? "Save and continue" : "Continue";
+                <vc:next-previous-navigation show-previous="false" show-save="@showSave" show-next="true" show-go-to-summary="false" next-button-display-text="@nextButtonText" />
+            }
+        }
+    </form>
+    
+@section Scripts
+{
+    <script src="~/js/goods-inspection.js" asp-append-version="true"></script>
+}

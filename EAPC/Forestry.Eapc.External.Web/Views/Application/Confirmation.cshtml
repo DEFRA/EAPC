@@ -1,0 +1,47 @@
+﻿@using Forestry.Eapc.External.Web.Infrastructure.Display
+@model Forestry.Eapc.External.Web.Models.Application.Application
+
+@{
+    var canSubmit = ViewData.ModelState.IsValid;
+}
+
+<div class="govuk-grid-column-full">
+    
+    <vc:gds-warning warning-message-html="Important - Please read the terms and conditions of submission before you submit your application.<br/><br/>If you make a false statement on a phytosanitary certificate application or if you fail to comply with any of the obligations mentioned below, you may be liable to civil sanctions or prosecution and, if convicted, to a fine of an unlimited amount."/>
+
+    <p class="govuk-heading-s">By ticking the box below and submitting your application for a phytosanitary certificate you are confirming:</p>
+
+    <ol class="govuk-list govuk-list--number">
+        <li>that you have read and understood the <a target="_blank" class="govuk-link" rel="noreferrer noopener" aria-label="Open guidance notes for when to use this site to apply for an export health phytosanitary certificate" href="https://www.gov.uk/guidance/export-wood-wood-products-and-bark-from-great-britain">government guidance (opens in new tab)</a> on exporting wood, wood products and bark from Great Britain which includes details of applicable fees.</li>
+        <li>that you have checked the plant health regulations in the country of destination.</li>
+        <li>that the information provided is accurate.</li>
+        <li>that you have agreed to the Forestry Commissions standard credit terms – Forestry Commission require payment not later than the end of the month following the month of supply of goods or provision of services. By using this service, the exporter agrees to pay outstanding fees in accordance therewith.</li>
+        <li>that you understand you may be charged for withdrawn applications after submission even if the certificate has not been issued.</li>
+    </ol>
+    <p class="govuk-body">Unique registration or certificate identity numbers must be used by the named exporter (professional operator) only for a single consignment and not passed on for use by third parties or in connection with another exporter or consignment.</p>
+    <p class="govuk-inset-text">Note: If your business is moving regulated timber, wood products and bark from Great Britain to Northern Ireland, you do not need to pay for inspecting and certifying goods. These fees are covered by the government&apos;s <a target="_blank" class="govuk-link" rel="noreferrer noopener" aria-label="Open information on the government's Movement Assistance Scheme" href="https://www.gov.uk/government/publications/movement-assistance-scheme-get-help-with-moving-agrifood-goods-to-northern-ireland">Movement Assistance Scheme (opens in new tab)</a>.</p>
+    
+    <form method="post">
+        <div class="govuk-form-group">
+            <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                <div class="govuk-checkboxes__item">
+                    <input class="govuk-checkboxes__input" asp-for="Confirmation.AcceptTermsAndConditions">
+                    <label asp-for="Confirmation.AcceptTermsAndConditions" class="govuk-label govuk-checkboxes__label"></label>
+                </div>
+                </div>
+        </div>
+
+        <div class="govuk-form-group">
+            @if (canSubmit)
+            {
+                <input id="submit-application" type="submit" class="govuk-button" data-module="govuk-button" name="@PageConstants.NavigationButtonName" value="@Enum.GetName(NavigationDirection.Submit)">
+            }
+            <input type="submit" class="govuk-button" name="@PageConstants.NavigationButtonName" value="@Enum.GetName(NavigationDirection.Previous)">
+        </div>
+    </form>
+</div>
+
+@section Scripts
+{
+    <script src="~/js/confirmation.js" asp-append-version="true"></script>
+}

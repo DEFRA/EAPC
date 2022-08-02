@@ -1,0 +1,83 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+
+.btn-application-command {
+    margin-right: 1rem;
+    width: 6rem;
+    text-transform: capitalize;
+}
+
+.eapc-number-no-buttons {
+    -webkit-appearance: none;
+    margin: 0;
+    -moz-appearance: textfield;
+}
+
+.app-main {
+    border-left: 1px solid #bfc1c3;
+    margin: 30px 0;
+    min-height: 500px;
+    padding-left: 20px;
+}
+
+.app-section-nav {
+    margin-bottom: 100px;
+    margin-top: 10px;
+    font-weight: 400;
+}
+
+.app-section-nav-list {
+    list-style-type: none;
+    padding-inline-start: 25px !important;
+}
+.app-subnav-section-item {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.app-subnav-section-item-current {
+    font-weight: bold;
+    background-color:  rgb(255, 255, 255);
+    border-left-color: rgb(29, 112, 184);
+    border-left-style: solid;
+    border-left-width: 4px;
+    padding-left: 7px;
+    margin-left: -10px;
+}
+
+.section-nav-link {
+    text-decoration: underline;
+    text-decoration-thickness: max(2px, 0.0625rem) !important;
+    text-underline-offset: 0.1em;
+}
+
+.app-subnav-section-item-has-no-errors::before {
+    content: '\2713';
+    display: inline-block;
+}
+
+.app-subnav-section-item-has-errors::before {
+    content: '\2713';
+    visibility: hidden;
+
+}
+.app-subnav-section-item-no-state::before {
+    content: '\2713';
+    visibility: hidden;
+}
+
+.d-none {
+    display: none !important;
+}
+
+
+.blue-border {
+    border-color: #2b8cc4;
+    background-color: #eaf4f9
+}
+
+.eapc-optional-suffix:after {
+    content: " (optional)";
+    color: black;
+}

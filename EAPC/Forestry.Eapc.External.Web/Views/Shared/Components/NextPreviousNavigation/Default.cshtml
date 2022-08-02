@@ -1,0 +1,33 @@
+﻿@using Forestry.Eapc.External.Web.Infrastructure.Display
+@model Forestry.Eapc.External.Web.Views.Shared.Components.NextPreviousNavigation.NextPreviousNavigationViewComponentModel
+
+<div class="govuk-button-group">
+    @if (Model.ShowPrevious)
+    {
+        <button type="submit" class="govuk-button" data-module="govuk-button" name="@PageConstants.NavigationButtonName" value="@Enum.GetName(NavigationDirection.Previous)">
+            @Enum.GetName(NavigationDirection.Previous)
+        </button>
+    }
+    
+    @if (Model.ShowNext)
+    {
+        <button type="submit" class="govuk-button" data-module="govuk-button" name="@PageConstants.NavigationButtonName" value="@Enum.GetName(NavigationDirection.Next)">
+            @Model.NextButtonDisplayText
+        </button>
+    }
+
+    @if (Model.ShowSave)
+    {
+        <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="@PageConstants.NavigationButtonName" value="@Enum.GetName(NavigationDirection.Save)">
+            @Enum.GetName(NavigationDirection.Save)
+        </button>
+    }
+    
+    @if (Model.ShowGoToSummary)
+    {
+        <button type="submit" class="govuk-button" data-module="govuk-button" name="@PageConstants.NavigationButtonName" value="@Enum.GetName(NavigationDirection.Summary)">
+           Return to check answers
+        </button>
+    }
+
+</div>

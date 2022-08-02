@@ -1,0 +1,20 @@
+﻿@{
+    string referenceNumber = ViewBag.ReferenceNumber;
+}
+<div class="govuk-grid-column-full">
+    <div class="govuk-panel govuk-panel--confirmation">
+        <h1 class="govuk-panel__title">
+            Your application for an export health phytosanitary certificate has been submitted.
+        </h1>
+        <div class="govuk-panel__body">
+            Your reference number is<br>
+            @if (!string.IsNullOrWhiteSpace(referenceNumber))
+            {
+                <strong>@referenceNumber</strong>
+            }
+        </div>
+    </div>
+    
+    <h3 class="govuk-body">If you need to contact us regarding this application please quote your reference.</h3>
+    <a asp-controller="Applications" asp-action="Index" class="govuk-link">Click here to return to your list of existing applications, or to start a new application</a>.
+</div>

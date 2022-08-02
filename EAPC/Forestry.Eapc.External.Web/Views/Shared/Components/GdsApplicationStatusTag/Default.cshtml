@@ -1,0 +1,45 @@
+﻿@using Forestry.Eapc.External.Web.Models.Application
+@model Forestry.Eapc.External.Web.Views.Shared.Components.GdsApplicationStatusTag.GdsApplicationStatusTagViewComponentModel
+
+@if (Model.ApplicationState == ApplicationState.Submitted)
+{
+            <strong class="govuk-tag govuk-tag--blue">
+                Submitted
+            </strong>
+}
+else if (Model.ApplicationState == ApplicationState.Draft)
+{
+            <strong class="govuk-tag govuk-tag--grey">
+                Draft
+            </strong>
+}
+else if (Model.ApplicationState == ApplicationState.Withdrawn)
+{
+            <strong class="govuk-tag govuk-tag--red">
+                Withdrawn
+            </strong>
+}
+else if (Model.ApplicationState == ApplicationState.Issued)
+{
+            <strong class="govuk-tag govuk-tag--green">
+                Issued
+            </strong>
+}
+else if (Model.ApplicationState == ApplicationState.Charged)
+{
+            <strong class="govuk-tag govuk-tag--pink">
+                Charged
+            </strong>
+}
+else if (Model.ApplicationState == ApplicationState.Paid)
+{
+            <strong class="govuk-tag govuk-tag--purple">
+                Paid
+            </strong>
+}
+else if (Model.ApplicationState == ApplicationState.Unknown)
+{
+            <strong class="govuk-tag govuk-tag--yellow">
+                Unknown
+            </strong>
+}
